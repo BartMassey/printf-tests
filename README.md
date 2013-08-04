@@ -6,6 +6,34 @@ This project is an attempt to pull together various
 projects and compile them into a single language-independent
 file that is at least nearly equal to the sum of its parts.
 
+
+The principal source file here is `printf-tests.txt`.
+The format of this file is
+
+        result format-string arg1 arg2 ...  
+
+The result and format strings are string literals in C
+syntax; the result may be just the literal character ?, in
+which case `printf` is expected to fail.  The arguments are
+string, character or numeric literals in C syntax, or
+pointer literals with the syntax <NUMBER>V for a 32-bit
+pointer or <NUMBER>VL for a 64-bit pointer. Fields are
+separated by space characters: there are deliberately no tab
+characters in the file. Blank lines and lines beginning with
+"#" are to be ignored.
+
+String literals deliberately do not contain double-quote
+characters or backslash escapes, to make them easier to deal
+with. As a result, all strings can be collected by simply
+reading from the starting quote to the ending quote.
+
+There are two obvious ways to use these tests. The first way
+is to simply build a program that reads in and executes each
+test and checks the result, all at runtime. The second way
+is to build a program that parses the tests and generates a
+program in the target language that can be run to execute
+the tests. The second way might be easier.
+
 This work is licensed under the GPL version 2: please see
 the file COPYING in this distribution for license terms. It
 draws upon sources that are either GPL v2 or under licenses
