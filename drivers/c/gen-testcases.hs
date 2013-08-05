@@ -37,9 +37,9 @@ parseFields cs@(c : _) | isNumeric c =
          False ->
            case cs' of
              'U' : _ -> error "refused to parse negative unsigned value"
-             'L' : 'L' : cs'' -> FieldSigned (negate i) : parseFields cs''
+             'L' : 'L' : cs'' -> FieldSigned i : parseFields cs''
              'V' : _ -> error "refused to parse negative pointer value"
-             _ -> FieldSigned (negate i) : parseFields cs'
+             _ -> FieldSigned i : parseFields cs'
     False ->
       let d = case reads s :: [(Double, String)] of
             [(d', "")] -> d'
