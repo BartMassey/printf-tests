@@ -17,21 +17,28 @@ static void failmsg(int serial, char *fmt, ...) {
     va_end(ap);
 }
 
-static void test(int serial, char *expect, char *fmt, ...) {
+static int test(int serial, char *expect, char *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
     int n = vsnprintf(buf, 1024, fmt, ap);
     va_end(ap);
     if (n >= 1024) {
         failmsg(serial, "buffer overflow");
-        return;
+        return 1;
     }
     if (n != strlen(expect)) {
         failmsg(serial, "expected %d characters, got %d\n", n, strlen(expect));
-        return;
+        return 1;
     }
     if (strcmp(buf, expect)) {
         failmsg(serial, "expected \"%s\", got \"%s\"\n", expect, buf);
-        return;
+        return 1;
     }
+    return 0;
+}
+
+int main() {
+    int result = 0;
+#include "testcases.c"
+    return result;
 }
