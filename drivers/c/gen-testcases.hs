@@ -9,11 +9,13 @@ import Text.Printf
 
 data Field = FieldString String | FieldChar Char | 
              FieldSigned Integer | FieldUnsigned Integer |
-             FieldPointer Integer | FieldFloating Double
+             FieldPointer Integer | FieldFloating Double |
+             FieldAntiTest
 
 parseFields :: String -> [Field]
 parseFields "" = []
 parseFields (' ' : cs) = parseFields cs
+parseFields ('?' : cs) = FieldAntiTest : parseFields cs
 parseFields ('\'' : c : '\'' : cs) = FieldChar c : parseFields cs
 parseFields cs@(c : _) | isNumeric c =
   let (s, cs') = span isNumeric cs in
@@ -72,12 +74,16 @@ instance Show Field where
     | u >= 0 = "(void *)" ++ show u ++ "ULL"
     | otherwise = error "refused to show signed pointer value"
   show (FieldFloating d) = show d
+  show (FieldAntiTest) = "0"
 
 genCase :: String -> IO ()
 genCase testcase =
   case parseFields testcase of
+    serial : FieldAntiTest : _ ->
+      printf "    /* %s: anti-test */\n" (show serial)
     serial : result : format : args -> do
-      _ <- printf "    test(%s, %s, %s" (show serial) (show result) (show format)
+      _ <- printf "    test(%s, %s, %s" 
+             (show serial) (show result) (show format)
       mapM_ (printf ", %s" . show) args
       printf ");\n"
     _ -> 
