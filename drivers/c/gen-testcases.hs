@@ -41,7 +41,7 @@ parseFields cs@(c : _) | isNumeric c =
              'V' : _ -> error "refused to parse negative pointer value"
              _ -> FieldSigned (negate i) : parseFields cs'
     False ->
-      let d = case reads ('-' : s) :: [(Double, String)] of
+      let d = case reads s :: [(Double, String)] of
             [(d', "")] -> d'
             _ -> error "badly formatted floating point number in input"
       in
