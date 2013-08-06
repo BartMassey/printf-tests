@@ -27,7 +27,7 @@ static int test(int serial, char *expect, char *fmt, ...) {
         return 1;
     }
     if (n != strlen(expect)) {
-        failmsg(serial, "expected %d characters, got %d\n", n, strlen(expect));
+        failmsg(serial, "expected %d characters, got %d\n", strlen(expect), n);
         return 1;
     }
     if (strcmp(buf, expect)) {
