@@ -97,6 +97,10 @@ genCase testcase =
 
 main :: IO ()
 main = do
+  mapM_ putStrLn  [ 
+    "/* XXX This code generated automatically by gen-testcases.hs",
+    "   from ../../printf-tests.txt . You probably do not want to",
+    "   manually edit this file. */" ]
   contents <- getContents
   mapM_ genCase $ filter (\s -> nonblank s && noncomment s) $ lines contents
   where
