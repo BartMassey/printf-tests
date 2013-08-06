@@ -9,7 +9,10 @@ import Text.Printf
 
 data Field = FieldString String | FieldChar Char | 
              FieldSigned Integer | FieldUnsigned Integer |
-             FieldPointer Integer | FieldFloating Double |
+             FieldPointer Integer | 
+             FieldSigned64 Integer | FieldUnsigned64 Integer |
+             FieldPointer64 Integer | 
+             FieldFloating Double |
              FieldAntiTest
 
 parseFields :: String -> [Field]
@@ -28,16 +31,16 @@ parseFields cs@(c : _) | isNumeric c =
        case i >= 0 of
          True ->
            case cs' of
-             'U' : 'L' : 'L' : cs'' -> FieldUnsigned i : parseFields cs''
+             'L' : 'L' : cs'' -> FieldSigned64 i : parseFields cs''
+             'U' : 'L' : 'L' : cs'' -> FieldUnsigned64 i : parseFields cs''
              'U' : cs'' -> FieldUnsigned i : parseFields cs''
-             'L' : 'L' : cs'' -> FieldSigned i : parseFields cs''
-             'V' : 'L' : 'L' : cs'' -> FieldPointer i : parseFields cs''
+             'V' : 'L' : 'L' : cs'' -> FieldPointer64 i : parseFields cs''
              'V' : cs'' -> FieldPointer i : parseFields cs''
              _ -> FieldSigned i : parseFields cs'
          False ->
            case cs' of
              'U' : _ -> error "refused to parse negative unsigned value"
-             'L' : 'L' : cs'' -> FieldSigned i : parseFields cs''
+             'L' : 'L' : cs'' -> FieldSigned64 i : parseFields cs''
              'V' : _ -> error "refused to parse negative pointer value"
              _ -> FieldSigned i : parseFields cs'
     False ->
@@ -62,15 +65,18 @@ parseFields _ = error "stray character in input"
 instance Show Field where
   show (FieldString s) = show s
   show (FieldChar c) = show c
-  show (FieldSigned i)
-    | i >= (-2147483648) && i <= 2147483647 = show i
-    | otherwise = show i ++ "LL"
+  show (FieldSigned i) = show i
+  show (FieldSigned64 i) = show i ++ "LL"
   show (FieldUnsigned u)
-    | u >= 0 && u <= 4294967295 = show u ++ "U"
+    | u >= 0 = show u ++ "U"
+    | otherwise = error "refused to show signed unsigned value"
+  show (FieldUnsigned64 u)
     | u >= 0 = show u ++ "ULL"
     | otherwise = error "refused to show signed unsigned value"
   show (FieldPointer u)
-    | u >= 0 && u <= 4294967295 = "(void *)" ++ show u ++ "U"
+    | u >= 0 = "(void *)" ++ show u ++ "U"
+    | otherwise = error "refused to show signed pointer value"
+  show (FieldPointer64 u)
     | u >= 0 = "(void *)" ++ show u ++ "ULL"
     | otherwise = error "refused to show signed pointer value"
   show (FieldFloating d) = show d
