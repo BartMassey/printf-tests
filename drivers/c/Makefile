@@ -11,3 +11,9 @@ testcases.c: gen-testcases ../../printf-tests.txt
 
 gen-testcases: gen-testcases.hs
 	ghc -Wall --make gen-testcases.hs
+
+clean:
+	-rm -f printf-tests gen-testcases
+
+realclean: clean
+	-rm -f testcases.c
