@@ -73,6 +73,8 @@
   55 "Hot Pocket"            "%1$s %2$s"     "Hot" "Pocket"
   56 "12.0 Hot Pockets"      "%1$.1f %2$s %3$ss" 12.0 "Hot" "Pocket"
 # glibc printf fails this test, returning "42"
+# Note that the printf(3) spec does not allow mixing positional and
+# indexed args like this.
 # 57 " 42"                   "%1$*.f"        3 42.0
 
   58 ?                       "%2$*s"         "Hot Pocket"
@@ -87,14 +89,16 @@
 
   66 "+hello+"               "+%s+"          "hello"
   67 "+10+"                  "+%d+"          10
-  68 "a"                     "%c"            "a"
+  68 "a"                     "%c"            'a'
   69 " "                     "%c"            32
   70 "$"                     "%c"            36
   71 "10"                    "%d"            10
   72 ?                       "%s%s"          42
   73 ?                       "%c"
-  74 "%10"                   "%10"           42
-  75 "10 %"                  "%d %"          10
+# glibc printf fails this test, returns ""
+# 74 "%10"                   "%10"           42
+# glibc printf fails this test, returns "10 "
+# 75 "10 %"                  "%d %"          10
 
 # Tests from MSVCRT
   76 "+7.894561230000000e+008"       "%+#23.15e"     789456123.0
