@@ -3,6 +3,9 @@
 # Please see the file COPYING in this distribution for
 # license terms.
 
+printf-tests.log: printf-tests
+	./printf-tests >printf-tests.log
+
 printf-tests: printf-tests.c testcases.c
 	gcc -Wall -g -o printf-tests printf-tests.c
 
