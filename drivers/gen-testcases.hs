@@ -96,34 +96,36 @@ showL LHaskell (FieldUnsigned64 u)
   | otherwise = error "refused to show signed unsigned value"
 showL LHaskell (FieldPointer _) = "undefined"
 showL LHaskell (FieldPointer64 _) = "undefined"
-showL LHaskell (FieldFloating d) = show d
+showL LHaskell (FieldFloating d) = printf "(%s :: Double)" $ show d
 showL LHaskell (FieldAntiTest) = error "tried to show antitest"
 
 genCase :: Language -> String -> IO ()
 genCase lang testcase =
   case parseFields testcase of
-    serial : FieldAntiTest : _ ->
+    FieldSigned serial : FieldAntiTest : _ ->
       case lang of
         LC -> 
-          printf "    /* %s: anti-test */\n" (showL lang serial)
+          printf "    /* %d: anti-test */\n" serial
         LHaskell ->
-          printf "    -- %s: anti-test\n" (showL lang serial)
-    fields ->
+          printf "  -- %d: anti-test\n" serial
+    FieldSigned serial : fields ->
       case map (showL lang) fields of
-        serial : result : format : args ->
+        result : format : args ->
           case lang of
             LC -> do
-              _ <- printf "    test(%s, %s, %s" 
+              _ <- printf "    result |= test(%d, %s, %s"
                      serial result format
               mapM_ (printf ", %s") args
               printf ");\n"
             LHaskell -> do
-              _ <- printf "    checkResult %s $ printf %s %s" 
+              _ <- printf "  checkResult %d %s $\n    printf %s"
                      serial result format
               mapM_ (printf " %s") args
               printf "\n"
         _ -> 
           error $ printf "bad parse for: %s" testcase
+    _ -> 
+      error $ printf "bad serial parse for: %s" testcase
 
 makeComment :: Language -> [String] -> String
 makeComment LC [] = error "made empty comment"
