@@ -4,7 +4,7 @@
 -- license terms.
 
 import Data.Char
-import Data.List (find)
+import Data.List (find, intercalate)
 import System.Environment
 import Text.Printf
 
@@ -128,7 +128,7 @@ genCase lang testcase =
 makeComment :: Language -> [String] -> String
 makeComment LC [] = error "made empty comment"
 makeComment LC (s : ss) =
-  "/* " ++ s ++ "\n" ++ unlines (map ("   " ++) ss) ++ " */\n"
+  "/* " ++ s ++ "\n" ++ intercalate "\n" (map ("   " ++) ss) ++ " */\n"
 makeComment LHaskell ss =
   unlines $ map ("-- " ++) ss
 
@@ -140,7 +140,7 @@ main = do
         "Haskell" -> LHaskell
         _ -> error "unknown testcase language"
   putStr $ makeComment lang  [ 
-    "This code generated automatically by gen-testcases.hs",
+    "XXX This code generated automatically by gen-testcases.hs",
     "from ../../printf-tests.txt . You probably do not want to",
     "manually edit this file." ]
   contents <- getContents
