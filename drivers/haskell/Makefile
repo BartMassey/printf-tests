@@ -12,12 +12,12 @@ printf-extensible-tests.log: printf-extensible-tests
 	-./printf-extensible-tests >printf-extensible-tests.log
 
 printf-tests: printf-tests.hs testcases.hs
-	ghc -Wall -c printf-tests.hs
-	ghc -Wall --make -o printf-tests printf-tests.hs
+	-rm -f printf-tests.hi printf-tests.o
+	ghc -Wall -o printf-tests printf-tests.hs
 
 printf-extensible-tests: printf-tests.hs testcases.hs
-	ghc -Wall -DEXTENSIBLE -c printf-tests.hs
-	ghc -Wall --make -o printf-extensible-tests printf-tests.hs
+	-rm -f printf-tests.hi printf-tests.o
+	ghc -Wall -DEXTENSIBLE -o printf-extensible-tests printf-tests.hs
 
 testcases.hs: ../gen-testcases ../../printf-tests.txt 
 	../gen-testcases Haskell <../../printf-tests.txt >testcases.hs
