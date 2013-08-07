@@ -118,12 +118,12 @@ genCase lang testcase =
               mapM_ (printf ", %s") args
               printf ");\n"
             LHaskell -> do
-              _ <- printf ("  checkResult %d %s =<<" ++
-                           " (flip catch handler $ return $! Right $!\n" ++
+              _ <- printf ("  (checkResult %d %s =<<) $" ++
+                           " flip catch handler $ return $! Right $!\n" ++
                            "    printf %s")
                             serial result format
               mapM_ (printf " %s") args
-              printf ")\n"
+              printf "\n"
         _ -> 
           error $ printf "bad parse for: %s" testcase
     _ -> 

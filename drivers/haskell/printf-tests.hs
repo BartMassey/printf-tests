@@ -4,6 +4,7 @@
 -- Please see the file COPYING in this distribution for
 -- license terms.
 
+import Prelude hiding (catch)
 import Control.Exception
 import Control.Monad
 import Data.Int
