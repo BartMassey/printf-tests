@@ -9,14 +9,11 @@ printf-tests.log: printf-tests
 printf-tests: printf-tests.c testcases.c
 	gcc -Wall -g -o printf-tests printf-tests.c
 
-testcases.c: gen-testcases ../../printf-tests.txt 
-	./gen-testcases <../../printf-tests.txt >testcases.c
-
-gen-testcases: gen-testcases.hs
-	ghc -Wall --make gen-testcases.hs
+testcases.c: ../gen-testcases ../../printf-tests.txt 
+	../gen-testcases <../../printf-tests.txt >testcases.c
 
 clean:
-	-rm -f printf-tests gen-testcases
+	-rm -f printf-tests
 
 realclean: clean
 	-rm -f testcases.c
