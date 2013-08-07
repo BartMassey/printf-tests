@@ -10,7 +10,7 @@ printf-tests: printf-tests.c testcases.c
 	gcc -Wall -g -o printf-tests printf-tests.c
 
 testcases.c: ../gen-testcases ../../printf-tests.txt 
-	../gen-testcases <../../printf-tests.txt >testcases.c
+	../gen-testcases C <../../printf-tests.txt >testcases.c
 
 clean:
 	-rm -f printf-tests
