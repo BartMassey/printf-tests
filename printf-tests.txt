@@ -69,12 +69,13 @@
   52 ?                       "%c"            2097152
 
 # glibc printf fails this test, returning "%"
-# 53 "%1$"                   "%1$"
-  54 "%0$s"                  "%0$s"
+!C 53 "%1$"                   "%1$"
+# This test is not obviously defined.
+# 54 "%0$s"                  "%0$s"
   55 "Hot Pocket"            "%1$s %2$s"     "Hot" "Pocket"
   56 "12.0 Hot Pockets"      "%1$.1f %2$s %3$ss" 12.0 "Hot" "Pocket"
 # glibc printf fails this test, returning "42"
-# Note that the printf(3) spec does not allow mixing positional and
+# However, the printf(3) spec does not allow mixing positional and
 # indexed args like this.
 # 57 " 42"                   "%1$*.f"        3 42.0
 
@@ -97,9 +98,9 @@
   72 ?                       "%s%s"          42
   73 ?                       "%c"
 # glibc printf fails this test, returns ""
-# 74 "%10"                   "%10"           42
+!C 74 "%10"                   "%10"           42
 # glibc printf fails this test, returns "10 "
-# 75 "10 %"                  "%d %"          10
+!C 75 "10 %"                  "%d %"          10
 
 # Tests from MSVCRT
   76 "+7.894561230000000e+08"        "%+#22.15e"     789456123.0
@@ -107,6 +108,7 @@
   78 " 7.894561230000000e+08"        "%#22.15e"      789456123.0
   79 "8.e+08"                        "%#1.1g"        789456123.0
 
+# The arg constant here is not legal C.
 # 80 "-8589934591"                   "%lld"         18446744065119617025LL
   81 "    +100"                      "%+8lld"       100LL
   82 "+00000100"                     "%+.8lld"      100LL
@@ -147,14 +149,14 @@
  117 "0000000000000000000000000000000000000001" "%.40lld" 1LL
  118 " 0000000000000000000000000000000000000001" "% .40lld" 1LL
  119 " 0000000000000000000000000000000000000001" "% .40d" 1
-#This arguably shouldn't succeed, because the constant is bogus.
+#See above.
 #120 "-8589934591"                   "%lld"          18446744065119617025LL
 # libc fails this, with "" and return code -1 (!)
-#121 "%I"                            "%I"            1
+!C 121 "%I"                            "%I"            1
  122 "1"                             "%I0d"          1
  123 "                               1" "%I32d"         1
 # libc fails this, with "%D"
-#124 "%llD"                          "%llD"          -1LL
+!C 124 "%llD"                          "%llD"          -1LL
 
  125 " 1"                            "% d"           1
  126 "+1"                            "%+ d"          1
@@ -166,14 +168,13 @@
  131 "0x01    "                      "%#-08.2x"      1
  132 "00000001"                      "%#08o"         1
 # Haskell has no pointers
-#133 "0x39"                          "%p"            57VLL
+!H 133 "0x39"                          "%p"            57VLL
 # These tests are undefined.
 #134 "  0X0000000000000039"          "%#020p"        57VLL
 #135 "0000000000000039"              "%Fp"           57VLL
-# This test is undefined.
 #136 "0X0000000000000039  "          "%#-020p"       57VLL
 # Haskell has no pointers
-#137 "0x39"                          "%p"            57V
+!H 137 "0x39"                          "%p"            57V
 # These tests are undefined.
 #138 "  0X00000039"                  "%#012p"        57V
 #139 "00000039"                      "%Fp"           57V
@@ -189,7 +190,7 @@
  148 "  a"                           "%3c"           'a'
  149 "1234"                          "%3d"           1234
 # libc fails this, with "" and return code -1
-#150 "%3h"                           "%3h"
+!C 150 "%3h"                           "%3h"
 # libc fails this, with a big mess worth sorting out later.
 # Note that the given result is clearly wrong.
 #151 "jkmqrtvyz"                     "%j%k%m%q%r%t%v%y%z"
@@ -208,18 +209,18 @@
  164 "+1"                            "%+i"           1
  165 "12"                            "%o"            10
 # libc fails these, returning "(nil)", which is not
-# allowed by the spec.
-#166 "0x0"                           "%p"            0VLL
-#167 "0x0"                           "%p"            0V
+# allowed by the spec. Haskell has no pointer type.
+!CH 166 "0x0"                           "%p"            0VLL
+!CH 167 "0x0"                           "%p"            0V
 # This test is undefined.
 #168 "(null)"                        "%s"            0
  169 "%%%%"                          "%s"            "%%%%"
  170 "4294967295"                    "%u"            -1
  171 "%w"                            "%w"            -1
 # libc fails these, with "" and return -1
-#172 "%h"                            "%h"            -1
-#173 "%z"                            "%z"            -1
-#174 "%j"                            "%j"            -1
+!C 172 "%h"                            "%h"            -1
+!C 173 "%z"                            "%z"            -1
+!C 174 "%j"                            "%j"            -1
 # This test is undefined.
 #175 ""                              "%F"            -1
  176 "%H"                            "%H"            -1
