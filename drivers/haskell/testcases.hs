@@ -97,8 +97,8 @@
     printf "%5.10f" (42.8952 :: Double)
   -- 51: anti-test
   -- 52: anti-test
-  (checkResult 54 "%0$s" =<<) $ flip catch handler $ return $! Right $!
-    printf "%0$s"
+  (checkResult 53 "%1$" =<<) $ flip catch handler $ return $! Right $!
+    printf "%1$"
   (checkResult 55 "Hot Pocket" =<<) $ flip catch handler $ return $! Right $!
     printf "%1$s %2$s" "Hot" "Pocket"
   (checkResult 56 "12.0 Hot Pockets" =<<) $ flip catch handler $ return $! Right $!
@@ -130,6 +130,10 @@
     printf "%d" (10 :: Int32)
   -- 72: anti-test
   -- 73: anti-test
+  (checkResult 74 "%10" =<<) $ flip catch handler $ return $! Right $!
+    printf "%10" (42 :: Int32)
+  (checkResult 75 "10 %" =<<) $ flip catch handler $ return $! Right $!
+    printf "%d %" (10 :: Int32)
   (checkResult 76 "+7.894561230000000e+08" =<<) $ flip catch handler $ return $! Right $!
     printf "%+#22.15e" (7.89456123e8 :: Double)
   (checkResult 77 "7.894561230000000e+08 " =<<) $ flip catch handler $ return $! Right $!
@@ -216,10 +220,14 @@
     printf "% .40lld" (1 :: Int64)
   (checkResult 119 " 0000000000000000000000000000000000000001" =<<) $ flip catch handler $ return $! Right $!
     printf "% .40d" (1 :: Int32)
+  (checkResult 121 "%I" =<<) $ flip catch handler $ return $! Right $!
+    printf "%I" (1 :: Int32)
   (checkResult 122 "1" =<<) $ flip catch handler $ return $! Right $!
     printf "%I0d" (1 :: Int32)
   (checkResult 123 "                               1" =<<) $ flip catch handler $ return $! Right $!
     printf "%I32d" (1 :: Int32)
+  (checkResult 124 "%llD" =<<) $ flip catch handler $ return $! Right $!
+    printf "%llD" (-1 :: Int64)
   (checkResult 125 " 1" =<<) $ flip catch handler $ return $! Right $!
     printf "% d" (1 :: Int32)
   (checkResult 126 "+1" =<<) $ flip catch handler $ return $! Right $!
@@ -232,6 +240,8 @@
     printf "%#-08.2x" (1 :: Int32)
   (checkResult 132 "00000001" =<<) $ flip catch handler $ return $! Right $!
     printf "%#08o" (1 :: Int32)
+  -- 133: excluded for Haskell
+  -- 137: excluded for Haskell
   (checkResult 142 "f" =<<) $ flip catch handler $ return $! Right $!
     printf "%.1s" "foo"
   (checkResult 143 "f" =<<) $ flip catch handler $ return $! Right $!
@@ -246,6 +256,8 @@
     printf "%3c" 'a'
   (checkResult 149 "1234" =<<) $ flip catch handler $ return $! Right $!
     printf "%3d" (1234 :: Int32)
+  (checkResult 150 "%3h" =<<) $ flip catch handler $ return $! Right $!
+    printf "%3h"
   (checkResult 152 "2" =<<) $ flip catch handler $ return $! Right $!
     printf "%-1d" (2 :: Int32)
   (checkResult 153 "8.6000" =<<) $ flip catch handler $ return $! Right $!
@@ -274,12 +286,20 @@
     printf "%+i" (1 :: Int32)
   (checkResult 165 "12" =<<) $ flip catch handler $ return $! Right $!
     printf "%o" (10 :: Int32)
+  -- 166: excluded for Haskell
+  -- 167: excluded for Haskell
   (checkResult 169 "%%%%" =<<) $ flip catch handler $ return $! Right $!
     printf "%s" "%%%%"
   (checkResult 170 "4294967295" =<<) $ flip catch handler $ return $! Right $!
     printf "%u" (-1 :: Int32)
   (checkResult 171 "%w" =<<) $ flip catch handler $ return $! Right $!
     printf "%w" (-1 :: Int32)
+  (checkResult 172 "%h" =<<) $ flip catch handler $ return $! Right $!
+    printf "%h" (-1 :: Int32)
+  (checkResult 173 "%z" =<<) $ flip catch handler $ return $! Right $!
+    printf "%z" (-1 :: Int32)
+  (checkResult 174 "%j" =<<) $ flip catch handler $ return $! Right $!
+    printf "%j" (-1 :: Int32)
   (checkResult 176 "%H" =<<) $ flip catch handler $ return $! Right $!
     printf "%H" (-1 :: Int32)
   (checkResult 177 "%0" =<<) $ flip catch handler $ return $! Right $!
