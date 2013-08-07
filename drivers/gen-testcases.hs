@@ -8,18 +8,25 @@ import Data.List (find, intercalate)
 import System.Environment
 import Text.Printf
 
+data Language = LC | LHaskell
+
 data Field = FieldString String | FieldChar Char | 
              FieldSigned Integer | FieldUnsigned Integer |
              FieldPointer Integer | 
              FieldSigned64 Integer | FieldUnsigned64 Integer |
              FieldPointer64 Integer | 
              FieldFloating Double |
-             FieldAntiTest
+             FieldAntiTest | FieldBadLanguage String
 
 parseFields :: String -> [Field]
 parseFields "" = []
 parseFields (' ' : cs) = parseFields cs
 parseFields ('?' : cs) = FieldAntiTest : parseFields cs
+parseFields ('!' : cs) =
+  let langChars = "CH"
+      (ls, cs') = span (`elem` langChars) cs
+  in
+   FieldBadLanguage ls : parseFields cs'
 parseFields ('\'' : c : '\'' : cs) = FieldChar c : parseFields cs
 parseFields cs@(c : _) | isNumeric c =
   let (s, cs') = span isNumeric cs in
@@ -63,8 +70,6 @@ parseFields ('"' : cs) =
     _ -> error "unclosed string"
 parseFields _ = error "stray character in input"
 
-data Language = LC | LHaskell
-
 showL :: Language -> Field -> String
 showL LC (FieldString s) = show s
 showL LC (FieldChar c) = show c
@@ -84,6 +89,7 @@ showL LC (FieldPointer64 u)
   | otherwise = error "refused to show signed pointer value"
 showL LC (FieldFloating d) = show d
 showL LC (FieldAntiTest) = "0"
+showL LC (FieldBadLanguage _) = error "bad badlanguage"
 showL LHaskell (FieldString s) = show s
 showL LHaskell (FieldChar c) = show c
 showL LHaskell (FieldSigned i) = printf "(%s :: Int32)" $ show i
@@ -98,17 +104,29 @@ showL LHaskell (FieldPointer _) = "undefined"
 showL LHaskell (FieldPointer64 _) = "undefined"
 showL LHaskell (FieldFloating d) = printf "(%s :: Double)" $ show d
 showL LHaskell (FieldAntiTest) = error "tried to show antitest"
+showL LHaskell (FieldBadLanguage _) = error "bad badlanguage"
 
 genCase :: Language -> String -> IO ()
 genCase lang testcase =
   case parseFields testcase of
-    FieldSigned serial : FieldAntiTest : _ ->
+    FieldBadLanguage ls : rest@(FieldSigned serial : _) ->
+      case langChar lang `elem` ls of
+        True ->
+          case lang of
+            LC -> printf "    /* %d: excluded for C */\n" serial
+            LHaskell -> printf "  -- %d: excluded for Haskell\n" serial
+        False ->
+          processFields rest
+    rest -> processFields rest
+  where
+    langChar LHaskell = 'H'
+    langChar LC = 'C'
+    processFields :: [Field] -> IO ()
+    processFields (FieldSigned serial : FieldAntiTest : _) =
       case lang of
-        LC -> 
-          printf "    /* %d: anti-test */\n" serial
-        LHaskell ->
-          printf "  -- %d: anti-test\n" serial
-    FieldSigned serial : fields ->
+        LC -> printf "    /* %d: anti-test */\n" serial
+        LHaskell -> printf "  -- %d: anti-test\n" serial
+    processFields (FieldSigned serial : fields) =
       case map (showL lang) fields of
         result : format : args ->
           case lang of
@@ -126,7 +144,7 @@ genCase lang testcase =
               printf "\n"
         _ -> 
           error $ printf "bad parse for: %s" testcase
-    _ -> 
+    processFields _ =
       error $ printf "bad serial parse for: %s" testcase
 
 makeComment :: Language -> [String] -> String
