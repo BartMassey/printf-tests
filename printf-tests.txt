@@ -165,13 +165,15 @@
  130 "0x00000001"                    "%#04.8x"       1
  131 "0x01    "                      "%#-08.2x"      1
  132 "00000001"                      "%#08o"         1
- 133 "0x39"                          "%p"            57VLL
+# Haskell has no pointers
+#133 "0x39"                          "%p"            57VLL
 # These tests are undefined.
 #134 "  0X0000000000000039"          "%#020p"        57VLL
 #135 "0000000000000039"              "%Fp"           57VLL
 # This test is undefined.
 #136 "0X0000000000000039  "          "%#-020p"       57VLL
- 137 "0x39"                          "%p"            57V
+# Haskell has no pointers
+#137 "0x39"                          "%p"            57V
 # These tests are undefined.
 #138 "  0X00000039"                  "%#012p"        57V
 #139 "00000039"                      "%Fp"           57V
