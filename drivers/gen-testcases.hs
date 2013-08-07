@@ -5,6 +5,7 @@
 
 import Data.Char
 import Data.List (find)
+import System.Environment
 import Text.Printf
 
 data Field = FieldString String | FieldChar Char | 
@@ -62,47 +63,89 @@ parseFields ('"' : cs) =
     _ -> error "unclosed string"
 parseFields _ = error "stray character in input"
 
-instance Show Field where
-  show (FieldString s) = show s
-  show (FieldChar c) = show c
-  show (FieldSigned i) = show i
-  show (FieldSigned64 i) = show i ++ "LL"
-  show (FieldUnsigned u)
-    | u >= 0 = show u ++ "U"
-    | otherwise = error "refused to show signed unsigned value"
-  show (FieldUnsigned64 u)
-    | u >= 0 = show u ++ "ULL"
-    | otherwise = error "refused to show signed unsigned value"
-  show (FieldPointer u)
-    | u >= 0 = "(void *)" ++ show u ++ "U"
-    | otherwise = error "refused to show signed pointer value"
-  show (FieldPointer64 u)
-    | u >= 0 = "(void *)" ++ show u ++ "ULL"
-    | otherwise = error "refused to show signed pointer value"
-  show (FieldFloating d) = show d
-  show (FieldAntiTest) = "0"
+data Language = LC | LHaskell
 
-genCase :: String -> IO ()
-genCase testcase =
+showL :: Language -> Field -> String
+showL LC (FieldString s) = show s
+showL LC (FieldChar c) = show c
+showL LC (FieldSigned i) = show i
+showL LC (FieldSigned64 i) = show i ++ "LL"
+showL LC (FieldUnsigned u)
+  | u >= 0 = show u ++ "U"
+  | otherwise = error "refused to show signed unsigned value"
+showL LC (FieldUnsigned64 u)
+  | u >= 0 = show u ++ "ULL"
+  | otherwise = error "refused to show signed unsigned value"
+showL LC (FieldPointer u)
+  | u >= 0 = "(void *)" ++ show u ++ "U"
+  | otherwise = error "refused to show signed pointer value"
+showL LC (FieldPointer64 u)
+  | u >= 0 = "(void *)" ++ show u ++ "ULL"
+  | otherwise = error "refused to show signed pointer value"
+showL LC (FieldFloating d) = show d
+showL LC (FieldAntiTest) = "0"
+showL LHaskell (FieldString s) = show s
+showL LHaskell (FieldChar c) = show c
+showL LHaskell (FieldSigned i) = printf "(%s :: Int32)" $ show i
+showL LHaskell (FieldSigned64 i) = printf "(%s :: Int64)" $ show i
+showL LHaskell (FieldUnsigned u)
+  | u >= 0 = printf "(%s :: Word32)" $ show u
+  | otherwise = error "refused to show signed unsigned value"
+showL LHaskell (FieldUnsigned64 u)
+  | u >= 0 = printf "(%s :: Word64)" $ show u
+  | otherwise = error "refused to show signed unsigned value"
+showL LHaskell (FieldPointer _) = "undefined"
+showL LHaskell (FieldPointer64 _) = "undefined"
+showL LHaskell (FieldFloating d) = show d
+showL LHaskell (FieldAntiTest) = error "tried to show antitest"
+
+genCase :: Language -> String -> IO ()
+genCase lang testcase =
   case parseFields testcase of
     serial : FieldAntiTest : _ ->
-      printf "    /* %s: anti-test */\n" (show serial)
-    serial : result : format : args -> do
-      _ <- printf "    test(%s, %s, %s" 
-             (show serial) (show result) (show format)
-      mapM_ (printf ", %s" . show) args
-      printf ");\n"
-    _ -> 
-      error $ printf "bad parse for: %s" testcase
+      case lang of
+        LC -> 
+          printf "    /* %s: anti-test */\n" (showL lang serial)
+        LHaskell ->
+          printf "    -- %s: anti-test\n" (showL lang serial)
+    fields ->
+      case map (showL lang) fields of
+        serial : result : format : args ->
+          case lang of
+            LC -> do
+              _ <- printf "    test(%s, %s, %s" 
+                     serial result format
+              mapM_ (printf ", %s") args
+              printf ");\n"
+            LHaskell -> do
+              _ <- printf "    checkResult %s $ printf %s %s" 
+                     serial result format
+              mapM_ (printf " %s") args
+              printf "\n"
+        _ -> 
+          error $ printf "bad parse for: %s" testcase
+
+makeComment :: Language -> [String] -> String
+makeComment LC [] = error "made empty comment"
+makeComment LC (s : ss) =
+  "/* " ++ s ++ "\n" ++ unlines (map ("   " ++) ss) ++ " */\n"
+makeComment LHaskell ss =
+  unlines $ map ("-- " ++) ss
 
 main :: IO ()
 main = do
-  mapM_ putStrLn  [ 
-    "/* XXX This code generated automatically by gen-testcases.hs",
-    "   from ../../printf-tests.txt . You probably do not want to",
-    "   manually edit this file. */" ]
+  [ langStr ] <- getArgs
+  let lang = case langStr of
+        "C" -> LC
+        "Haskell" -> LHaskell
+        _ -> error "unknown testcase language"
+  putStr $ makeComment lang  [ 
+    "This code generated automatically by gen-testcases.hs",
+    "from ../../printf-tests.txt . You probably do not want to",
+    "manually edit this file." ]
   contents <- getContents
-  mapM_ genCase $ filter (\s -> nonblank s && noncomment s) $ lines contents
+  mapM_ (genCase lang) $ 
+    filter (\s -> nonblank s && noncomment s) $ lines contents
   where
     nonblank s =
       case find (/= ' ') s of
