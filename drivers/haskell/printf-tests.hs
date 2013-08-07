@@ -11,7 +11,11 @@ import Data.Int
 import Data.IORef
 import Data.Word
 import System.Exit
+#ifdef EXTENSIBLE
+import Text.Printf.Extensible
+#else
 import Text.Printf
+#endif
 
 main :: IO ()
 main = do
