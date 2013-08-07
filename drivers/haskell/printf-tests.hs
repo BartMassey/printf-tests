@@ -15,20 +15,20 @@ import Text.Printf
 main :: IO ()
 main = do
   result <- newIORef True
-  let handler :: Int -> ErrorCall -> IO (Maybe String)
-      handler serial _ = do
+  let handler :: ErrorCall -> IO (Either String String)
+      handler msg = do
         writeIORef result False
-        _ <- printf "test %d exceptioned\n" serial
-        return Nothing
-  let checkResult :: Int -> String -> Maybe String -> IO ()
-      checkResult _ _ Nothing = return ()
-      checkResult serial expected (Just got) = do
-        _ <- printf "test %d\n" serial
-        when (expected /= got) 
+        return $ Left $ show msg
+  let checkResult :: Int -> String -> Either String String -> IO ()
+      checkResult serial _ (Left msg) =
+        printf "test %d excepted: %s\n" serial msg
+      checkResult serial expected (Right got) = do
+        when (expected /= got)
           (do
               writeIORef result False
               printf "test %d failed: expected \"%s\" got \"%s\"\n"
                 serial expected got)
+        return ()
 #include "testcases.hs"
   r <- readIORef result
   when (not r) exitFailure
