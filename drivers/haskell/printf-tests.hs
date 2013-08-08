@@ -27,13 +27,18 @@ main = do
   let checkResult :: Int -> String -> Either String String -> IO ()
       checkResult serial _ (Left msg) =
         printf "test %d excepted: %s\n" serial msg
-      checkResult serial expected (Right got) = do
-        when (expected /= got)
-          (do
-              writeIORef result False
-              printf "test %d failed: expected \"%s\" got \"%s\"\n"
-                serial expected got)
-        return ()
+      checkResult serial expected (Right got) =
+        case expected == got of
+          False -> do
+            writeIORef result False
+            printf "test %d failed: expected \"%s\" got \"%s\"\n"
+              serial expected got
+          True ->
+#ifdef VERBOSE
+            printf "test %d succeeded\n" serial
+#else
+            return ()
+#endif
 #include "testcases.hs"
   r <- readIORef result
   when (not r) exitFailure
