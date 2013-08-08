@@ -130,10 +130,8 @@
     printf "%d" (10 :: Int32)
   -- 72: anti-test
   -- 73: anti-test
-  (checkResult 74 "%10" =<<) $ flip catch handler $ return $! Right $!
-    printf "%10" (42 :: Int32)
-  (checkResult 75 "10 %" =<<) $ flip catch handler $ return $! Right $!
-    printf "%d %" (10 :: Int32)
+  -- 74: excluded for Haskell
+  -- 75: excluded for Haskell
   (checkResult 76 "+7.894561230000000e+08" =<<) $ flip catch handler $ return $! Right $!
     printf "%+#22.15e" (7.89456123e8 :: Double)
   (checkResult 77 "7.894561230000000e+08 " =<<) $ flip catch handler $ return $! Right $!
