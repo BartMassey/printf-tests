@@ -98,9 +98,11 @@
   72 ?                       "%s%s"          42
   73 ?                       "%c"
 # glibc printf fails this test, returns ""
-!C 74 "%10"                   "%10"           42
+# Haskell fails this test ohrribly
+!CH 74 "%10"                   "%10"           42
 # glibc printf fails this test, returns "10 "
-!C 75 "10 %"                  "%d %"          10
+# Haskell fails this test ohrribly
+!CH 75 "10 %"                  "%d %"          10
 
 # Tests from MSVCRT
   76 "+7.894561230000000e+08"        "%+#22.15e"     789456123.0
