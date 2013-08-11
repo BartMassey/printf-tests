@@ -137,7 +137,7 @@ genCase lang testcase =
               printf ");\n"
             LHaskell -> do
               _ <- printf ("  (checkResult %d %s =<<) $" ++
-                           " flip catch handler $ return $! Right $!\n" ++
+                           " flip E.catch handler $ return $! Right $!\n" ++
                            "    printf %s")
                             serial result format
               mapM_ (printf " %s") args
