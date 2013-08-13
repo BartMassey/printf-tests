@@ -69,18 +69,20 @@
   52 ?                       "%c"            2097152
 
 # glibc printf fails this test, returning "%"
-!C 53 "%1$"                   "%1$"
+# haskell printf fails these tests, since no indexed arguments
+!CH 53 "%1$"                   "%1$"
 # This test is not obviously defined.
 # 54 "%0$s"                  "%0$s"
-  55 "Hot Pocket"            "%1$s %2$s"     "Hot" "Pocket"
-  56 "12.0 Hot Pockets"      "%1$.1f %2$s %3$ss" 12.0 "Hot" "Pocket"
+!H 55 "Hot Pocket"            "%1$s %2$s"     "Hot" "Pocket"
+!H 56 "12.0 Hot Pockets"      "%1$.1f %2$s %3$ss" 12.0 "Hot" "Pocket"
 # glibc printf fails this test, returning "42"
 # However, the printf(3) spec does not allow mixing positional and
 # indexed args like this.
 # 57 " 42"                   "%1$*.f"        3 42.0
 
-  58 ?                       "%2$*s"         "Hot Pocket"
-  59 "%(foo"                 "%(foo"
+!H 58 ?                       "%2$*s"         "Hot Pocket"
+# haskell correctly reports an error
+!H 59 "%(foo"                 "%(foo"
 
   60 " foo"                  "%*s"           4 "foo"
   61 "      3.14"            "%*.*f"         10 2 3.14159265
@@ -101,21 +103,23 @@
 # Haskell fails this test ohrribly
 !CH 74 "%10"                   "%10"           42
 # glibc printf fails this test, returns "10 "
-# Haskell fails this test ohrribly
+# Haskell correctly throws an error
 !CH 75 "10 %"                  "%d %"          10
 
 # Tests from MSVCRT
-  76 "+7.894561230000000e+08"        "%+#22.15e"     789456123.0
-  77 "7.894561230000000e+08 "        "%-#22.15e"     789456123.0
-  78 " 7.894561230000000e+08"        "%#22.15e"      789456123.0
-  79 "8.e+08"                        "%#1.1g"        789456123.0
+# Haskell fails these tests due to different floating formatting
+!H 76 "+7.894561230000000e+08"        "%+#22.15e"     789456123.0
+!H 77 "7.894561230000000e+08 "        "%-#22.15e"     789456123.0
+!H 78 " 7.894561230000000e+08"        "%#22.15e"      789456123.0
+!H 79 "8.e+08"                        "%#1.1g"        789456123.0
 
 # The arg constant here is not legal C.
 # 80 "-8589934591"                   "%lld"         18446744065119617025LL
   81 "    +100"                      "%+8lld"       100LL
   82 "+00000100"                     "%+.8lld"      100LL
   83 " +00000100"                    "%+10.8lld"    100LL
-  84 "%_1lld"                        "%_1lld"       100LL
+# haskell correctly reports an error here
+!H 84 "%_1lld"                        "%_1lld"       100LL
   85 "-00100"                        "%-1.5lld"     -100LL
   86 "  100"                         "%5lld"        100LL
   87 " -100"                         "%5lld"        -100LL
@@ -135,7 +139,8 @@
  101 "-00100"                        "% .5lld"      -100LL
  102 "   00100"                      "% 8.5lld"     100LL
  103 "  -00100"                      "% 8.5lld"     -100LL
- 104 ""                              "%.0lld"       0LL
+# libc printf fails this test, returning ""
+!C 104 "0"                             "%.0lld"       0LL
  105 " 0x00ffffffffffffff9c"         "%#+21.18llx"  -100LL
  106 "0001777777777777777777634"     "%#.25llo"     -100LL
  107 " 01777777777777777777634"      "%#+24.20llo"  -100LL
@@ -154,11 +159,14 @@
 #See above.
 #120 "-8589934591"                   "%lld"          18446744065119617025LL
 # libc fails this, with "" and return code -1 (!)
-!C 121 "%I"                            "%I"            1
- 122 "1"                             "%I0d"          1
- 123 "                               1" "%I32d"         1
+# haskell correctly reports an error here
+!CH 121 "%I"                            "%I"            1
+# The next two tests are locale-specific and should not be used
+#122 "1"                             "%I0d"          1
+#123 "                               1" "%I32d"         1
 # libc fails this, with "%D"
-!C 124 "%llD"                          "%llD"          -1LL
+# haskell correctly throws an error
+!CH 124 "%llD"                          "%llD"          -1LL
 
  125 " 1"                            "% d"           1
  126 "+1"                            "%+ d"          1
@@ -184,28 +192,32 @@
 #141 "0foo"                          "%04s"          "foo"
  142 "f"                             "%.1s"          "foo"
  143 "f"                             "%.*s"          1 "foo"
- 144 "foo  "                         "%*s"           -5 "foo"
+# libc printf fails this, returning "foo  "
+!C 144 "foo"                         "%*s"           -5 "foo"
  145 "hello"                         "hello"
 # This test is undefined.
 #146 "not wide"                      "%Ls"           "not wide"
- 147 "%b"                            "%b"
+# haskell correctly throws an error
+!H 147 "%b"                            "%b"
  148 "  a"                           "%3c"           'a'
  149 "1234"                          "%3d"           1234
 # libc fails this, with "" and return code -1
-!C 150 "%3h"                           "%3h"
+# haskell correctly throws an error
+!CH 150 "%3h"                           "%3h"
 # libc fails this, with a big mess worth sorting out later.
 # Note that the given result is clearly wrong.
 #151 "jkmqrtvyz"                     "%j%k%m%q%r%t%v%y%z"
  152 "2"                             "%-1d"          2
  153 "8.6000"                        "%2.4f"         8.6
- 154 "0.600000"                      "%0f"           0.6
+# haskell fails these because of different floating point formatting
+!H 154 "0.600000"                      "%0f"           0.6
  155 "1"                             "%.0f"          0.6
- 156 "8.6000e+00"                    "%2.4e"         8.6
- 157 " 8.6000e+00"                   "% 2.4e"        8.6
- 158 " 0008.6000e+00"                 "% 014.4e"      8.6
- 159 "-8.6000e+00"                   "% 2.4e"        -8.6
- 160 "+8.6000e+00"                   "%+2.4e"        8.6
- 161 "8.6"                           "%2.4g"         8.6
+!H 156 "8.6000e+00"                    "%2.4e"         8.6
+!H 157 " 8.6000e+00"                   "% 2.4e"        8.6
+!H 158 " 0008.6000e+00"                 "% 014.4e"      8.6
+!H 159 "-8.6000e+00"                   "% 2.4e"        -8.6
+!H 160 "+8.6000e+00"                   "%+2.4e"        8.6
+!H 161 "8.6"                           "%2.4g"         8.6
  162 "-1"                            "%-i"           -1
  163 "1"                             "%-i"           1
  164 "+1"                            "%+i"           1
@@ -218,16 +230,18 @@
 #168 "(null)"                        "%s"            0
  169 "%%%%"                          "%s"            "%%%%"
  170 "4294967295"                    "%u"            -1
- 171 "%w"                            "%w"            -1
+# haskell correctly throws an error on these
+!H 171 "%w"                            "%w"            -1
 # libc fails these, with "" and return -1
-!C 172 "%h"                            "%h"            -1
-!C 173 "%z"                            "%z"            -1
-!C 174 "%j"                            "%j"            -1
+!CH 172 "%h"                            "%h"            -1
+!CH 173 "%z"                            "%z"            -1
+!CH 174 "%j"                            "%j"            -1
 # This test is undefined.
 #175 ""                              "%F"            -1
- 176 "%H"                            "%H"            -1
+!H 176 "%H"                          "%H"            -1
  177 "%0"                            "%%0"
- 178 "2345"                          "%hx"           74565
+# haskell returns "12345"; this is arguably correct for Haskell.
+!H 178 "2345"                          "%hx"           74565
  179 "61"                            "%hhx"          'a'
 # This test seems hopeless: I don't understand it.
 #180 "2345"                          "%hhx"          74565
@@ -455,22 +469,25 @@
  384 "                    "  "%20.s"         "Hallo heimur"
  385 "                1024"  "%20.0d"        1024
  386 "               -1024"  "%20.d"         -1024
- 387 "                    "  "%20.d"         0
+# Haskell returns a 0 instead of all blanks for the
+# conversions below with a 0 argument. This is arguably
+# the right behavior, and will be left alone.
+!H 387 "                    "  "%20.d"         0
  388 "                1024"  "%20.0i"        1024
  389 "               -1024"  "%20.i"         -1024
- 390 "                    "  "%20.i"         0
+!H 390 "                    "  "%20.i"         0
  391 "                1024"  "%20.u"         1024
  392 "          4294966272"  "%20.0u"        4294966272U
- 393 "                    "  "%20.u"         0U
+!H 393 "                    "  "%20.u"         0U
  394 "                 777"  "%20.o"         511
  395 "         37777777001"  "%20.0o"        4294966785U
- 396 "                    "  "%20.o"         0U
+!H 396 "                    "  "%20.o"         0U
  397 "            1234abcd"  "%20.x"         305441741
  398 "            edcb5433"  "%20.0x"        3989525555U
- 399 "                    "  "%20.x"         0U
+!H 399 "                    "  "%20.x"         0U
  400 "            1234ABCD"  "%20.X"         305441741
  401 "            EDCB5433"  "%20.0X"        3989525555U
- 402 "                    "  "%20.X"         0U
+!H 402 "                    "  "%20.X"         0U
 
  403 "Hallo               "  "% -0+*.*s"     20 5 "Hallo heimur"
  404 "+01024              "  "% -0+*.*d"     20 5 1024
