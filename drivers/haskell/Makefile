@@ -4,7 +4,7 @@
 # license terms.
 
 HC = ghc
-HCFLAGS = # -DVERBOSE
+HCFLAGS = -Wall
 
 all: printf-tests.log printf-extensible-tests.log
 
@@ -16,7 +16,7 @@ printf-extensible-tests.log: printf-extensible-tests
 
 printf-tests: printf-tests.hs testcases.hs
 	-rm -f printf-tests.hi printf-tests.o
-	$(HC) $(HCFLAGS) -Wall -o printf-tests printf-tests.hs
+	$(HC) $(HCFLAGS) -o printf-tests printf-tests.hs
 
 printf-extensible-tests: printf-tests.hs testcases.hs
 	-rm -f printf-tests.hi printf-tests.o

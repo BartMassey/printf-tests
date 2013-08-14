@@ -10,6 +10,7 @@ import Control.Monad
 import Data.Int
 import Data.IORef
 import Data.Word
+import System.Environment
 import System.Exit
 import System.IO (hFlush, stdout)
 #ifdef EXTENSIBLE
@@ -20,6 +21,11 @@ import Text.Printf
 
 main :: IO ()
 main = do
+  args <- getArgs
+  let verbose = case args of
+        ["-v"] -> True
+        [] -> False
+        _ -> error "usage: printf-tests [-v]"
   result <- newIORef True
   let handler :: ErrorCall -> IO (Either String String)
       handler msg = do
@@ -37,11 +43,9 @@ main = do
               serial expected got :: IO ()
             hFlush stdout
           True -> do
-#ifdef VERBOSE
-            printf "test %d succeeded\n" serial
-#else
+            when verbose
+              (printf "test %d succeeded\n" serial)
             hFlush stdout
-#endif
 #include "testcases.hs"
   r <- readIORef result
   when (not r) exitFailure
