@@ -11,6 +11,7 @@ import Data.Int
 import Data.IORef
 import Data.Word
 import System.Exit
+import System.IO (hFlush, stdout)
 #ifdef EXTENSIBLE
 import Text.Printf.Extensible
 #else
@@ -25,19 +26,21 @@ main = do
         writeIORef result False
         return $ Left $ show msg
   let checkResult :: Int -> String -> Either String String -> IO ()
-      checkResult serial _ (Left msg) =
-        printf "test %d excepted: %s\n" serial msg
+      checkResult serial _ (Left msg) = do
+        printf "test %d excepted: %s\n" serial msg :: IO ()
+        hFlush stdout
       checkResult serial expected (Right got) =
         case expected == got of
           False -> do
             writeIORef result False
             printf "test %d failed: expected \"%s\" got \"%s\"\n"
-              serial expected got
-          True ->
+              serial expected got :: IO ()
+            hFlush stdout
+          True -> do
 #ifdef VERBOSE
             printf "test %d succeeded\n" serial
 #else
-            return ()
+            hFlush stdout
 #endif
 #include "testcases.hs"
   r <- readIORef result
