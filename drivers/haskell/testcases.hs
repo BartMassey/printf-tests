@@ -89,8 +89,6 @@
     printf "%1.2f" (42.8952 :: Double)
   (checkResult 47 " 42.90" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%6.2f" (42.8952 :: Double)
-  (checkResult 48 "042.90" =<<) $ flip E.catch handler $ return $! Right $!
-    printf "%06.2f" (42.8952 :: Double)
   (checkResult 49 "+42.90" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%+6.2f" (42.8952 :: Double)
   (checkResult 50 "42.8952000000" =<<) $ flip E.catch handler $ return $! Right $!
@@ -106,8 +104,6 @@
     printf "%*s" (4 :: Int32) "foo"
   (checkResult 61 "      3.14" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%*.*f" (10 :: Int32) (2 :: Int32) (3.14159265 :: Double)
-  (checkResult 62 "0000003.14" =<<) $ flip E.catch handler $ return $! Right $!
-    printf "%0*.*f" (10 :: Int32) (2 :: Int32) (3.14159265 :: Double)
   (checkResult 63 "3.14      " =<<) $ flip E.catch handler $ return $! Right $!
     printf "%-*.*f" (10 :: Int32) (2 :: Int32) (3.14159265 :: Double)
   -- 64: anti-test
