@@ -144,8 +144,7 @@
  101 "-00100"                        "% .5lld"      -100LL
  102 "   00100"                      "% 8.5lld"     100LL
  103 "  -00100"                      "% 8.5lld"     -100LL
-# libc printf fails this test, returning ""
-!C 104 "0"                             "%.0lld"       0LL
+ 104 ""                              "%.0lld"       0LL
  105 " 0x00ffffffffffffff9c"         "%#+21.18llx"  -100LL
  106 "0001777777777777777777634"     "%#.25llo"     -100LL
  107 " 01777777777777777777634"      "%#+24.20llo"  -100LL
@@ -197,8 +196,7 @@
 #141 "0foo"                          "%04s"          "foo"
  142 "f"                             "%.1s"          "foo"
  143 "f"                             "%.*s"          1 "foo"
-# libc printf fails this, returning "foo  "
-!C 144 "foo"                         "%*s"           -5 "foo"
+ 144 "foo  "                         "%*s"           -5 "foo"
  145 "hello"                         "hello"
 # This test is undefined.
 #146 "not wide"                      "%Ls"           "not wide"
