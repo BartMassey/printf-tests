@@ -173,7 +173,7 @@
     printf "% 8.5lld" (100 :: Int64)
   (checkResult 103 "  -00100" =<<) $ flip E.catch handler $ return $! Right $!
     printf "% 8.5lld" (-100 :: Int64)
-  (checkResult 104 "0" =<<) $ flip E.catch handler $ return $! Right $!
+  (checkResult 104 "" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%.0lld" (0 :: Int64)
   (checkResult 105 " 0x00ffffffffffffff9c" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%#+21.18llx" (-100 :: Int64)
@@ -225,7 +225,7 @@
     printf "%.1s" "foo"
   (checkResult 143 "f" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%.*s" (1 :: Int32) "foo"
-  (checkResult 144 "foo" =<<) $ flip E.catch handler $ return $! Right $!
+  (checkResult 144 "foo  " =<<) $ flip E.catch handler $ return $! Right $!
     printf "%*s" (-5 :: Int32) "foo"
   (checkResult 145 "hello" =<<) $ flip E.catch handler $ return $! Right $!
     printf "hello"
@@ -684,32 +684,38 @@
     printf "%20.0d" (1024 :: Int32)
   (checkResult 386 "               -1024" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%20.d" (-1024 :: Int32)
-  -- 387: excluded for Haskell
+  (checkResult 387 "                    " =<<) $ flip E.catch handler $ return $! Right $!
+    printf "%20.d" (0 :: Int32)
   (checkResult 388 "                1024" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%20.0i" (1024 :: Int32)
   (checkResult 389 "               -1024" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%20.i" (-1024 :: Int32)
-  -- 390: excluded for Haskell
+  (checkResult 390 "                    " =<<) $ flip E.catch handler $ return $! Right $!
+    printf "%20.i" (0 :: Int32)
   (checkResult 391 "                1024" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%20.u" (1024 :: Int32)
   (checkResult 392 "          4294966272" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%20.0u" (4294966272 :: Word32)
-  -- 393: excluded for Haskell
+  (checkResult 393 "                    " =<<) $ flip E.catch handler $ return $! Right $!
+    printf "%20.u" (0 :: Word32)
   (checkResult 394 "                 777" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%20.o" (511 :: Int32)
   (checkResult 395 "         37777777001" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%20.0o" (4294966785 :: Word32)
-  -- 396: excluded for Haskell
+  (checkResult 396 "                    " =<<) $ flip E.catch handler $ return $! Right $!
+    printf "%20.o" (0 :: Word32)
   (checkResult 397 "            1234abcd" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%20.x" (305441741 :: Int32)
   (checkResult 398 "            edcb5433" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%20.0x" (3989525555 :: Word32)
-  -- 399: excluded for Haskell
+  (checkResult 399 "                    " =<<) $ flip E.catch handler $ return $! Right $!
+    printf "%20.x" (0 :: Word32)
   (checkResult 400 "            1234ABCD" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%20.X" (305441741 :: Int32)
   (checkResult 401 "            EDCB5433" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%20.0X" (3989525555 :: Word32)
-  -- 402: excluded for Haskell
+  (checkResult 402 "                    " =<<) $ flip E.catch handler $ return $! Right $!
+    printf "%20.X" (0 :: Word32)
   (checkResult 403 "Hallo               " =<<) $ flip E.catch handler $ return $! Right $!
     printf "% -0+*.*s" (20 :: Int32) (5 :: Int32) "Hallo heimur"
   (checkResult 404 "+01024              " =<<) $ flip E.catch handler $ return $! Right $!
