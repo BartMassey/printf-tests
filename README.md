@@ -10,7 +10,12 @@ file that is at least nearly equal to the sum of its parts.
 The principal source file here is `printf-tests.txt`.
 The format of this file is
 
-        serial result format-string arg1 arg2 ...  
+        exclusion serial result format-string arg1 arg2 ...
+
+The exclusion is optional, and if present indicates a list
+of languages that should ignore this test. The exclusions
+are alphabetic and preceded by "!". Currently, one can
+exclude C with "C" or H with "H".
 
 The serial number is just that.  The result and format
 strings are string literals in C syntax; the result may be
@@ -33,7 +38,17 @@ is to simply build a program that reads in and executes each
 test and checks the result, all at runtime. The second way
 is to build a program that parses the tests and generates a
 program in the target language that can be run to execute
-the tests. The second way might be easier.
+the tests. The second way is sometimes easier.
+
+Included in this distro is a Haskell program
+(`gen-testcases.hs` in the `drivers` directory) that can be
+used to generate testcase files for C and Haskell. In
+`drivers/c` and `drivers/haskell` are test drivers that use
+this infrastructure. The Haskell driver tests both standard
+`Text.Printf` and my own `Text.Printf.Extensible`, available
+in the GitHub repo `extensible-printf`. To run all this,
+first "make" in the `drivers` subdirectory, and then again
+in the subdirectory for each driver.
 
 This work is licensed under the GPL version 2: please see
 the file COPYING in this distribution for license terms. It
