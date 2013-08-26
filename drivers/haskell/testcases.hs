@@ -244,8 +244,6 @@
     printf "%.0f" (0.6 :: Double)
   -- 156: excluded for Haskell
   -- 157: excluded for Haskell
-  (checkResult 158 " 0008.6000e+00" =<<) $ flip E.catch handler $ return $! Right $!
-    printf "% 014.4e" (8.6 :: Double)
   -- 159: excluded for Haskell
   -- 160: excluded for Haskell
   -- 161: excluded for Haskell
