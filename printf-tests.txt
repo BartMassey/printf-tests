@@ -213,12 +213,14 @@
 #151 "jkmqrtvyz"                     "%j%k%m%q%r%t%v%y%z"
  152 "2"                             "%-1d"          2
  153 "8.6000"                        "%2.4f"         8.6
-# haskell fails these because of different floating point formatting
+# Haskell fails these because of different floating point formatting
 !H 154 "0.600000"                      "%0f"           0.6
  155 "1"                             "%.0f"          0.6
 !H 156 "8.6000e+00"                    "%2.4e"         8.6
 !H 157 " 8.6000e+00"                   "% 2.4e"        8.6
-!H 158 " 0008.6000e+00"                 "% 014.4e"      8.6
+# This test is undefined, due to a weird codicil in the
+# manpage re zero flag plus precision for non-integral formats.
+# 158 " 0008.6000e+00"                 "% 014.4e"      8.6
 !H 159 "-8.6000e+00"                   "% 2.4e"        -8.6
 !H 160 "+8.6000e+00"                   "%+2.4e"        8.6
 !H 161 "8.6"                           "%2.4g"         8.6
