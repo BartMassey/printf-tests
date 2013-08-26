@@ -342,7 +342,6 @@
     result |= test(365, "          00edcb5433", "%20.10x", 3989525555U);
     result |= test(366, "            1234ABCD", "%20.5X", 305441741);
     result |= test(367, "          00EDCB5433", "%20.10X", 3989525555U);
-    result |= test(368, "               Hallo", "%020.5s", "Hallo heimur");
     result |= test(369, "               01024", "%020.5d", 1024);
     result |= test(370, "              -01024", "%020.5d", -1024);
     result |= test(371, "               01024", "%020.5i", 1024);

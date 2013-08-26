@@ -645,8 +645,6 @@
     printf "%20.5X" (305441741 :: Int32)
   (checkResult 367 "          00EDCB5433" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%20.10X" (3989525555 :: Word32)
-  (checkResult 368 "               Hallo" =<<) $ flip E.catch handler $ return $! Right $!
-    printf "%020.5s" "Hallo heimur"
   (checkResult 369 "               01024" =<<) $ flip E.catch handler $ return $! Right $!
     printf "%020.5d" (1024 :: Int32)
   (checkResult 370 "              -01024" =<<) $ flip E.catch handler $ return $! Right $!
