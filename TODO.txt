@@ -1,0 +1,3 @@
+* Carefully scan for and remove remaining undefined tests.
+* Get negative tests working for Haskell.
+* Write more and better tests.
