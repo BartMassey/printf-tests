@@ -456,7 +456,8 @@
  366 "            1234ABCD"  "%20.5X"        305441741
  367 "          00EDCB5433"  "%20.10X"       3989525555U
 
- 368 "               Hallo"  "%020.5s"       "Hallo heimur"
+# This test is undefined. Common sense says libc fails it.
+#368 "               Hallo"  "%020.5s"       "Hallo heimur"
  369 "               01024"  "%020.5d"       1024
  370 "              -01024"  "%020.5d"       -1024
  371 "               01024"  "%020.5i"       1024
