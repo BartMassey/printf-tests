@@ -739,3 +739,5 @@
     printf "% -+0*.*X" (20 :: Int32) (5 :: Int32) (305441741 :: Int32)
   (checkResult 415 "00EDCB5433          " =<<) $ flip E.catch handler $ return $! Right $!
     printf "% -+0*.*X" (20 :: Int32) (10 :: Int32) (3989525555 :: Word32)
+  (checkResult 416 "hi x" =<<) $ flip E.catch handler $ return $! Right $!
+    printf "%*sx" (-3 :: Int32) "hi"

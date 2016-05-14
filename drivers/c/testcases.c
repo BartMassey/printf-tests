@@ -4,6 +4,7 @@
     result |= test(1, "0.33", "%.*f", 2, 0.33333333);
     result |= test(2, "foo", "%.3s", "foobar");
     result |= test(3, "     00004", "%10.5d", 4);
+    result |= test(416, "hi x\\n", "%*sx\\n", -3, "hi");
     result |= test(4, " 42", "% d", 42);
     result |= test(5, "-42", "% d", -42);
     result |= test(6, "   42", "% 5d", 42);
