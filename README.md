@@ -15,7 +15,7 @@ The format of this file is
 The exclusion is optional, and if present indicates a list
 of languages that should ignore this test. The exclusions
 are alphabetic and preceded by "!". Currently, one can
-exclude C with "C" or H with "H".
+exclude C with "C" or Haskell with "H".
 
 The serial number is just that.  The result and format
 strings are string literals in C syntax; the result may be
@@ -44,11 +44,9 @@ Included in this distro is a Haskell program
 (`gen-testcases.hs` in the `drivers` directory) that can be
 used to generate testcase files for C and Haskell. In
 `drivers/c` and `drivers/haskell` are test drivers that use
-this infrastructure. The Haskell driver tests both standard
-`Text.Printf` and my own `Text.Printf.Extensible`, available
-in the GitHub repo `extensible-printf`. To run all this,
-first "make" in the `drivers` subdirectory, and then again
-in the subdirectory for each driver.
+this infrastructure. The Haskell driver tests `Text.Printf`.
+To run all this, first "make" in the `drivers` subdirectory,
+and then again in the subdirectory for each driver.
 
 This work is licensed under the GPL version 2: please see
 the file COPYING in this distribution for license terms. It
